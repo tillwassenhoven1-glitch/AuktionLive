@@ -11,6 +11,7 @@
 - ⏱️ **Anti-Sniping** – Gebote in den letzten 20 Sekunden verlängern die Auktion
 - ⭐ **4 Seltenheiten** – Gewöhnlich, Selten, Episch, Legendär
 - 🎒 **Inventar** – gewonnene Items selbst versteigern (5 % Gebühr) oder sofort an den Händler verkaufen (65 % vom Schätzwert)
+- 📈 **Marktübersicht wie an der Börse** – Kurs-Index pro Kategorie mit Kerzen-Chart (M1–D1), Kursliste links und Legende. Der Index beeinflusst die Item-Preise
 - 📊 **Statistik und Verlauf** – Vermögen, Gewinn/Verlust, gewonnene und verkaufte Items
 - 🛠️ **Cheat-Menü** (unten rechts) – nur mit Code: Geld, legendäre Items, Zeit vorspulen, Bots steuern und mehr
 - 💾 Speichert automatisch im Browser (localStorage)
