@@ -6,105 +6,119 @@
 <title>AuktionLive – v0.0.1 Open Beta</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔨</text></svg>">
 <style>
-:root{--bg:#0d1117;--panel:#161b26;--card:#1b2232;--line:#2a3347;--txt:#e8ecf3;--mut:#8b95a8;--acc:#ff4d5e;--good:#2ecc71;--bad:#ff5c5c;--gold:#ffb020;--blue:#4da3ff}
+:root{--bg:#000;--panel:#121214;--card:#1c1c1f;--card2:#232327;--line:#2c2c30;--txt:#f2f2f2;--mut:#8e8e93;--good:#3ecf6a;--bad:#ef4f4f;--gold:#e8c35a;--blue:#5b8def;--badbg:#2a1b1b;--mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
-button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:9px 14px;background:#2a3347;color:var(--txt);transition:.15s}
-button:hover{filter:brightness(1.2)}
-button:disabled{opacity:.4;cursor:not-allowed}
-input,select{font:inherit;background:#0f1420;color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
-header{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-.logo{font-size:24px;font-weight:800;letter-spacing:-.5px;display:flex;align-items:center;gap:8px}
-.logo span{color:var(--acc)}
-.ver{font-size:11px;font-weight:600;background:#ff4d5e22;color:var(--acc);padding:3px 8px;border-radius:20px}
-.live-dot{width:10px;height:10px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 0 #ff4d5e;animation:pulse 1.6s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 #ff4d5e99}70%{box-shadow:0 0 0 10px #ff4d5e00}100%{box-shadow:0 0 0 0 #ff4d5e00}}
-.wallet{display:flex;gap:18px;align-items:center}
-.wallet label{display:block;font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
-.wallet b{font-size:20px}
-#money{color:var(--good)}
-nav{display:flex;gap:6px;padding:12px 20px 0;flex-wrap:wrap}
-nav button{background:transparent;color:var(--mut);border-radius:10px 10px 0 0;border-bottom:2px solid transparent}
-nav button.on{color:var(--txt);border-bottom-color:var(--acc);background:var(--panel)}
-nav .cnt{background:var(--acc);color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;margin-left:4px}
-#filters{display:flex;gap:10px;flex-wrap:wrap;padding:14px 20px 0}
-main{padding:16px 20px 80px}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer;border:0;border-radius:999px;padding:10px 16px;background:var(--card2);color:var(--txt);font-weight:600;transition:.15s}
+button:hover{filter:brightness(1.25)}
+button:disabled{opacity:.35;cursor:not-allowed}
+input,select{font:inherit;background:var(--card);color:var(--txt);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.mono{font-family:var(--mono);letter-spacing:1.5px}
+header{display:flex;gap:14px;align-items:center;justify-content:space-between;padding:16px 20px;position:sticky;top:0;z-index:5;background:linear-gradient(#000 70%,#0000)}
+.pill{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 20px 7px 7px}
+.badge{width:46px;height:46px;border-radius:50%;background:#1a1a1a;border:2px solid #333;display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:800;font-size:16px}
+.pill b{font-size:22px;display:block;line-height:1.1}
+.pill small{color:var(--mut);font-size:12px;font-weight:600;white-space:nowrap}
+.hright{display:flex;gap:10px;align-items:center}
+.circ{width:52px;height:52px;border-radius:50%;padding:0;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+.circ svg{width:24px;height:24px}
+.avatar{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f3d77a,#b8902c);color:#2a1d00;font-weight:800;display:flex;align-items:center;justify-content:center;border:3px solid #2a2a2a}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 140px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:28px;padding:22px;margin-bottom:18px}
+.phead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.phead h2{margin:0;font-size:28px;font-weight:800;letter-spacing:-.5px}
+.phead span{color:var(--mut);font-size:15px}
+#filters{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.seg{display:inline-flex;gap:4px;background:#18181b;border-radius:999px;padding:5px;overflow-x:auto;max-width:100%;scrollbar-width:none}
+.seg button{background:transparent;color:var(--mut);padding:9px 16px;white-space:nowrap}
+.seg button.on{background:#2e2e33;color:var(--txt)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px;position:relative;transition:.2s}
-.card:hover{border-color:#3d4a66;transform:translateY(-2px)}
-.card.lead{border-color:var(--good);box-shadow:0 0 0 1px var(--good) inset}
-.card.outbid{border-color:var(--bad)}
-.card.soon .left{color:var(--acc);animation:blink 1s infinite}
-@keyframes blink{50%{opacity:.5}}
+.card{background:var(--card);border:2px solid transparent;border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:10px;position:relative;transition:.2s}
+.card:hover{background:#212125}
+.card.lead{border-color:#f2f2f2}
+.card.outbid{background:var(--badbg)}
+.card.soon .left{color:var(--bad);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.45}}
 .top{display:flex;align-items:center;gap:8px}
-.emoji{font-size:34px}
-.rar{font-size:11px;font-weight:700;color:var(--c);border:1px solid var(--c);padding:2px 8px;border-radius:20px}
-.tag{font-size:11px;background:#4da3ff22;color:var(--blue);padding:2px 8px;border-radius:20px}
-.card h3{margin:0;font-size:16px}
-.sub{font-size:12px;color:var(--mut)}
+.emoji{font-size:30px}
+.rar{font-size:10px;font-weight:700;color:var(--c);letter-spacing:2px;text-transform:uppercase;font-family:var(--mono)}
+.tag{font-size:10px;background:#2e2e33;color:var(--txt);padding:3px 9px;border-radius:999px;letter-spacing:1px;text-transform:uppercase;font-weight:700}
+.card h3{margin:0;font-size:19px;font-weight:800;letter-spacing:-.3px}
+.sub{font-size:12px;color:var(--mut);font-family:var(--mono);letter-spacing:1px;text-transform:uppercase}
 .row{display:flex;justify-content:space-between;align-items:flex-end}
-.row label{font-size:11px;color:var(--mut);display:block}
-.row b{font-size:19px}
+.row label{font-size:11px;color:var(--mut);display:block;margin-bottom:3px}
+.row b{font-size:20px;font-family:var(--mono);letter-spacing:1px}
 .r{text-align:right}
-.leader{font-size:12px;color:var(--mut)}
+.leader{font-size:13px;color:var(--mut)}
 .btns{display:flex;gap:8px;margin-top:auto}
 .btns button{flex:1}
-.quick{background:var(--acc);color:#fff;font-weight:700}
-.green{background:var(--good);color:#06210f;font-weight:700}
-.gold{background:var(--gold);color:#2b1c00;font-weight:700}
-.blue{background:var(--blue);color:#001a33;font-weight:700}
-.red{background:var(--bad);color:#fff;font-weight:700}
-.empty{color:var(--mut);text-align:center;padding:50px 10px}
+.quick{background:#f2f2f2;color:#000}
+.green{background:var(--good);color:#04210e}
+.gold{background:var(--gold);color:#2a1d00}
+.blue{background:#2e2e33;color:var(--txt)}
+.red{background:var(--bad);color:#fff}
+.up{color:var(--good)}.down{color:var(--bad)}
+.empty{color:var(--mut);text-align:center;padding:40px 10px}
 h2{margin:6px 0 12px;font-size:18px}
-.list{display:flex;flex-direction:column;gap:6px}
-.li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}
+.list{display:flex;flex-direction:column;gap:8px}
+.li{background:var(--card);border-radius:18px;padding:12px 16px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}
 .li small{color:var(--mut)}
-.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:20px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
-.stat label{font-size:12px;color:var(--mut)}
-.stat b{display:block;font-size:22px;margin-top:4px}
-.log .good{color:var(--good)}.log .bad{color:var(--bad)}.log .info{color:var(--blue)}
-footer{position:fixed;bottom:0;left:0;right:0;padding:8px 20px;background:var(--panel);border-top:1px solid var(--line);font-size:12px;color:var(--mut);display:flex;justify-content:space-between;align-items:center}
-footer button{padding:4px 10px;font-size:14px;background:transparent}
-#modal{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:8px}
+.stat{background:var(--card);border-radius:22px;padding:16px}
+.stat label{font-size:11px;color:var(--mut);font-family:var(--mono);letter-spacing:1.5px;text-transform:uppercase}
+.stat b{display:block;font-size:22px;margin-top:6px;font-family:var(--mono);letter-spacing:1px}
+.log .good{color:var(--good)}.log .bad{color:var(--bad)}.log .info{color:var(--txt)}
+#tabs{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);display:flex;gap:2px;background:#1a1a1d;border:1px solid var(--line);border-radius:999px;padding:7px;z-index:10;box-shadow:0 10px 40px #000c;max-width:calc(100% - 20px)}
+#tabs button{background:transparent;color:#c7c7cc;display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 18px;border-radius:999px;font-size:13px;position:relative;min-width:76px}
+#tabs button svg{width:26px;height:26px}
+#tabs button.on{background:#2e2e33;color:#fff}
+#tabs .cnt{position:absolute;top:4px;right:14px;background:#f2f2f2;color:#000;border-radius:999px;padding:0 6px;font-size:10px;font-weight:800}
+.ver{position:fixed;left:20px;bottom:26px;color:#c7c7cc;font-size:13px;font-weight:600;letter-spacing:1px;z-index:4}
+#modal{position:fixed;inset:0;background:#000c;backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
 #modal.hidden{display:none}
-.box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;width:100%;max-width:480px;max-height:90vh;overflow:auto;position:relative}
-.box h2{margin-top:0}
-.x{position:absolute;top:12px;right:12px;padding:4px 10px;background:transparent;font-size:18px}
-.hist{max-height:200px;overflow:auto;font-size:13px;margin-top:8px}
-.hist div{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--line)}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:28px;padding:24px;width:100%;max-width:480px;max-height:90vh;overflow:auto;position:relative}
+.box h2{margin-top:0;font-size:24px;font-weight:800}
+.x{position:absolute;top:14px;right:14px;width:36px;height:36px;padding:0;font-size:16px}
+.hist{max-height:200px;overflow:auto;font-size:13px;margin-top:8px;font-family:var(--mono)}
+.hist div{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)}
 .hist .you{color:var(--good);font-weight:700}
-.bidbox{display:flex;gap:8px;margin:12px 0 8px;flex-wrap:wrap}
-.bidbox input{flex:1;min-width:120px}
-.hint{font-size:12px;color:var(--mut);line-height:1.5}
-.big{font-size:26px;font-weight:800}
+.bidbox{display:flex;gap:8px;margin:14px 0 8px;flex-wrap:wrap}
+.bidbox input{flex:1;min-width:120px;border-radius:999px;font-family:var(--mono)}
+.hint{font-size:12px;color:var(--mut);line-height:1.55}
+.big{font-size:26px;font-weight:800;font-family:var(--mono);letter-spacing:1px}
 .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
-#toasts{position:fixed;right:16px;bottom:50px;display:flex;flex-direction:column;gap:8px;z-index:30;max-width:340px}
-.toast{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:10px;padding:10px 12px;font-size:13px;animation:in .25s;box-shadow:0 6px 20px #0008}
-.toast.good{border-left-color:var(--good)}.toast.bad{border-left-color:var(--bad)}
-@keyframes in{from{transform:translateX(30px);opacity:0}}
-@media(max-width:600px){.wallet b{font-size:16px}.logo{font-size:20px}main{padding:12px}}
+#toasts{position:fixed;right:16px;top:90px;display:flex;flex-direction:column;gap:8px;z-index:30;max-width:340px}
+.toast{background:#1c1c1f;border:1px solid var(--line);border-radius:18px;padding:12px 14px;font-size:13px;animation:in .25s;box-shadow:0 10px 30px #000c}
+.toast.good{border-color:#2a5a3a}.toast.bad{border-color:#5a2a2a;background:var(--badbg)}
+@keyframes in{from{transform:translateY(-10px);opacity:0}}
+@media(max-width:1400px){.ver{display:none}}
+@media(max-width:700px){.pill{padding-right:14px}.circ,.avatar{width:44px;height:44px}.pill b{font-size:18px}.wrap{padding:0 12px 130px}.panel{padding:16px;border-radius:22px}#tabs button{min-width:0;padding:8px 10px;font-size:11px}#tabs button svg{width:22px;height:22px}.ver{display:none}.phead h2{font-size:22px}}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo"><div class="live-dot"></div>🔨 Auktion<span>Live</span> <small class="ver">v0.0.1 Open Beta</small></div>
-  <div class="wallet">
-    <div><label>Kontostand</label><b id="money">–</b></div>
-    <div><label>Verfügbar</label><b id="avail">–</b></div>
-    <button id="helpBtn" title="Hilfe">❓</button>
+  <div class="pill"><div class="badge">AL</div><div><b class="mono" id="money">–</b><small>Verfügbar <span id="avail">–</span></small></div></div>
+  <div class="hright">
+    <button class="circ" id="helpBtn" title="Hilfe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.7"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg></button>
+    <button class="circ" id="cheatBtn" title="Cheat-Menü"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-.5-.5-2.5z"/></svg></button>
+    <div class="avatar">TI</div>
   </div>
 </header>
+<div class="wrap">
+  <section class="panel">
+    <div class="phead"><h2 id="vTitle">Live-Auktionen</h2><span id="vSub"></span></div>
+    <div id="filters"></div>
+    <main id="view"></main>
+  </section>
+</div>
 <nav id="tabs">
-  <button data-tab="live" class="on">🔴 Live</button>
-  <button data-tab="mine">🙋 Meine Gebote<span class="cnt" id="cMine" hidden></span></button>
-  <button data-tab="inv">🎒 Inventar<span class="cnt" id="cInv" hidden></span></button>
-  <button data-tab="sell">🏷️ Verkäufe<span class="cnt" id="cSell" hidden></span></button>
-  <button data-tab="stats">📊 Statistik</button>
+  <button data-tab="live" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6M11 7l6 6M8.5 9.5l6 6M4 20l6-6"/><path d="M12.5 5.5l6 6-3 3-6-6z"/></svg>Live</button>
+  <button data-tab="mine"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg>Gebote<span class="cnt" id="cMine" hidden></span></button>
+  <button data-tab="inv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>Inventar<span class="cnt" id="cInv" hidden></span></button>
+  <button data-tab="sell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg>Verkäufe<span class="cnt" id="cSell" hidden></span></button>
+  <button data-tab="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Statistik</button>
 </nav>
-<div id="filters"></div>
-<main id="view"></main>
-<footer><span>AuktionLive v0.0.1 Open Beta · nur Spielgeld 💸 · läuft auch offline weiter</span><button id="cheatBtn" title="Cheat-Menü">🛠️</button></footer>
+<div class="ver">Version 0.0.1 Open Beta</div>
 <div id="modal" class="hidden"><div class="box" id="mbox"></div></div>
 <div id="toasts"></div>
 
@@ -315,7 +329,7 @@ const rarTag = it => `<span class="rar" style="--c:${RAR[it.rar].c}">${RAR[it.ra
 function card(a) {
   const it = a.item, you = a.leader === "you", mineSale = a.seller === "you";
   const cls = you ? "lead" : (a.youBid && !mineSale ? "outbid" : "");
-  const lead = a.leader ? (you ? `🟢 Du führst${a.proxy ? ` · Auto bis ${M(a.proxy)}` : ""}` : (a.youBid && !mineSale ? "🔴 Überboten von " : "👤 ") + esc(a.leader)) : "Noch keine Gebote";
+  const lead = a.leader ? (you ? `<span class="up">● Du führst</span>${a.proxy ? ` · Auto bis ${M(a.proxy)}` : ""}` : (a.youBid && !mineSale ? '<span class="down">● Überboten</span> von ' : "") + esc(a.leader)) : "Noch keine Gebote";
   return `<div class="card ${cls}" data-card="${a.id}">
     <div class="top"><span class="emoji">${it.e}</span>${rarTag(it)}${mineSale ? '<span class="tag">Dein Verkauf</span>' : ""}</div>
     <h3>${esc(it.name)}</h3>
@@ -333,11 +347,13 @@ function sortList(list) {
 }
 function renderFilters() {
   const el = document.getElementById("filters");
+  const titles = { live: ["Live-Auktionen", "Bots bieten live mit"], mine: ["Meine Gebote", "Laufend & beendet"], inv: ["Inventar", ""], sell: ["Verkäufe", `Gebühr ${FEE * 100} %`], stats: ["Statistik", "Version " + VERSION] };
+  document.getElementById("vTitle").textContent = titles[tab][0];
+  document.getElementById("vSub").textContent = titles[tab][1];
   if (tab !== "live") { el.innerHTML = ""; return; }
-  el.innerHTML = `<select id="fCat">${["Alle", ...CATS.map(c => c.cat)].map(c => `<option ${c === filt.cat ? "selected" : ""}>${c}</option>`).join("")}</select>
-  <select id="fSort">${[["end", "⏱️ Endet bald"], ["deal", "🤑 Bester Deal"], ["up", "💶 Preis aufsteigend"], ["down", "💶 Preis absteigend"], ["val", "💎 Schätzwert"], ["rar", "⭐ Seltenheit"]].map(([k, n]) => `<option value="${k}" ${k === filt.sort ? "selected" : ""}>${n}</option>`).join("")}</select>`;
-  document.getElementById("fCat").onchange = e => { filt.cat = e.target.value; render(true); };
-  document.getElementById("fSort").onchange = e => { filt.sort = e.target.value; render(true); };
+  el.innerHTML = `<div class="seg">${["Alle", ...CATS.map(c => c.cat)].map(c => `<button data-fcat="${c}" class="${c === filt.cat ? "on" : ""}">${c}</button>`).join("")}</div>
+  <div class="seg">${[["end", "Endet bald"], ["deal", "Bester Deal"], ["up", "Preis ↑"], ["down", "Preis ↓"], ["val", "Schätzwert"], ["rar", "Seltenheit"]].map(([k, n]) => `<button data-fsort="${k}" class="${k === filt.sort ? "on" : ""}">${n}</button>`).join("")}</div>`;
+  el.onclick = e => { const b = e.target.closest("button"); if (!b) return; if (b.dataset.fcat) filt.cat = b.dataset.fcat; if (b.dataset.fsort) filt.sort = b.dataset.fsort; renderFilters(); render(true); };
 }
 function endedLi(e) {
   const it = e.item;
@@ -360,11 +376,12 @@ function render(force) {
     v.innerHTML = list.length ? `<div class="grid">${sortList(list).map(card).join("")}</div>` : `<div class="empty">Gerade keine Auktionen in dieser Kategorie – gleich kommen neue rein ⏳</div>`;
   } else if (tab === "mine") {
     const ended = S.ended.filter(e => e.seller === "house" && e.youBid).slice(0, 20);
-    v.innerHTML = `<h2>🔴 Laufende Gebote</h2>${mine.length ? `<div class="grid">${sortList(mine).map(card).join("")}</div>` : `<div class="empty">Du bietest gerade nirgends mit. Ab in den Live-Tab! 🔨</div>`}
-    <h2 style="margin-top:24px">✅ Beendet</h2>${ended.length ? `<div class="list">${ended.map(endedLi).join("")}</div>` : `<div class="empty">Noch nichts beendet.</div>`}`;
+    v.innerHTML = `<h2>Laufend</h2>${mine.length ? `<div class="grid">${sortList(mine).map(card).join("")}</div>` : `<div class="empty">Du bietest gerade nirgends mit. Ab in den Live-Tab! 🔨</div>`}
+    <h2 style="margin-top:24px">Beendet</h2>${ended.length ? `<div class="list">${ended.map(endedLi).join("")}</div>` : `<div class="empty">Noch nichts beendet.</div>`}`;
   } else if (tab === "inv") {
     const total = S.inv.reduce((s, i) => s + i.value, 0);
-    v.innerHTML = `<h2>🎒 Inventar · ${S.inv.length} Items · Schätzwert gesamt ${M(total)}</h2>` + (S.inv.length ? `<div class="grid">${S.inv.map(it => `<div class="card">
+    document.getElementById("vSub").textContent = `${S.inv.length} Items · Wert ${M(total)}`;
+    v.innerHTML = (S.inv.length ? `<div class="grid">${S.inv.map(it => `<div class="card">
       <div class="top"><span class="emoji">${it.e}</span>${rarTag(it)}</div><h3>${esc(it.name)}</h3>
       <div class="sub">${it.cat} · ${it.cond}</div>
       <div class="row"><div><label>Schätzwert</label><b>${M(it.value)}</b></div><div class="r"><label>Bezahlt</label><b>${it.paid != null ? M(it.paid) : "–"}</b></div></div>
@@ -373,8 +390,8 @@ function render(force) {
     </div>`).join("")}</div>` : `<div class="empty">Dein Inventar ist leer. Gewinne Auktionen, um Items zu bekommen 🏆</div>`);
   } else if (tab === "sell") {
     const ended = S.ended.filter(e => e.seller === "you").slice(0, 20);
-    v.innerHTML = `<h2>🏷️ Deine laufenden Verkäufe</h2>${sells.length ? `<div class="grid">${sortList(sells).map(card).join("")}</div>` : `<div class="empty">Du verkaufst gerade nichts. Geh ins Inventar und klick auf „Versteigern“.</div>`}
-    <h2 style="margin-top:24px">✅ Beendete Verkäufe</h2>${ended.length ? `<div class="list">${ended.map(endedLi).join("")}</div>` : `<div class="empty">Noch keine Verkäufe.</div>`}
+    v.innerHTML = `<h2>Laufend</h2>${sells.length ? `<div class="grid">${sortList(sells).map(card).join("")}</div>` : `<div class="empty">Du verkaufst gerade nichts. Geh ins Inventar und klick auf „Versteigern“.</div>`}
+    <h2 style="margin-top:24px">Beendet</h2>${ended.length ? `<div class="list">${ended.map(endedLi).join("")}</div>` : `<div class="empty">Noch keine Verkäufe.</div>`}
     <p class="hint">Gebühr pro Verkauf: ${FEE * 100} % · Bots bieten auch auf deine Auktionen – auch wenn du offline bist.</p>`;
   } else if (tab === "stats") {
     const invVal = S.inv.reduce((s, i) => s + i.value, 0);
@@ -383,7 +400,7 @@ function render(force) {
     v.innerHTML = `<div class="stats">
       ${[["💶 Kontostand", M(S.money)], ["🏦 Vermögen (inkl. Items)", M(net)], ["📈 Gewinn/Verlust", `<span style="color:${net >= START_MONEY ? "var(--good)" : "var(--bad)"}">${M(net - START_MONEY)}</span>`], ["🏆 Gewonnen", st.won], ["💰 Verkauft", st.sold + st.dealer], ["🔨 Gebote abgegeben", st.bids], ["💸 Ausgegeben", M(st.spent)], ["🤑 Eingenommen", M(st.earned)], ["📊 Handelsgewinn", M(st.profit)]].map(([l, b]) => `<div class="stat"><label>${l}</label><b>${b}</b></div>`).join("")}
     </div>
-    <h2>📜 Verlauf</h2><div class="list log">${S.log.slice(0, 60).map(l => `<div class="li"><span class="${l.type}">${esc(l.msg)}</span><small>${fmtAgo(l.t)}</small></div>`).join("") || '<div class="empty">Noch nichts passiert.</div>'}</div>
+    <h2 style="margin-top:20px">Verlauf</h2><div class="list log">${S.log.slice(0, 60).map(l => `<div class="li"><span class="${l.type}">${esc(l.msg)}</span><small>${fmtAgo(l.t)}</small></div>`).join("") || '<div class="empty">Noch nichts passiert.</div>'}</div>
     <p style="margin-top:24px"><button class="red" data-act="reset">🗑️ Spielstand zurücksetzen</button></p>`;
   }
 }
