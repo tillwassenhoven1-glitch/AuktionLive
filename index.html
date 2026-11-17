@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AuktionLive – v0.0.1 Open Beta</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔨</text></svg>">
+<style>
+:root{--bg:#0d1117;--panel:#161b26;--card:#1b2232;--line:#2a3347;--txt:#e8ecf3;--mut:#8b95a8;--acc:#ff4d5e;--good:#2ecc71;--bad:#ff5c5c;--gold:#ffb020;--blue:#4da3ff}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:9px 14px;background:#2a3347;color:var(--txt);transition:.15s}
+button:hover{filter:brightness(1.2)}
+button:disabled{opacity:.4;cursor:not-allowed}
+input,select{font:inherit;background:#0f1420;color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+header{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.logo{font-size:24px;font-weight:800;letter-spacing:-.5px;display:flex;align-items:center;gap:8px}
+.logo span{color:var(--acc)}
+.ver{font-size:11px;font-weight:600;background:#ff4d5e22;color:var(--acc);padding:3px 8px;border-radius:20px}
+.live-dot{width:10px;height:10px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 0 #ff4d5e;animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #ff4d5e99}70%{box-shadow:0 0 0 10px #ff4d5e00}100%{box-shadow:0 0 0 0 #ff4d5e00}}
+.wallet{display:flex;gap:18px;align-items:center}
+.wallet label{display:block;font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
+.wallet b{font-size:20px}
+#money{color:var(--good)}
+nav{display:flex;gap:6px;padding:12px 20px 0;flex-wrap:wrap}
+nav button{background:transparent;color:var(--mut);border-radius:10px 10px 0 0;border-bottom:2px solid transparent}
+nav button.on{color:var(--txt);border-bottom-color:var(--acc);background:var(--panel)}
+nav .cnt{background:var(--acc);color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;margin-left:4px}
+#filters{display:flex;gap:10px;flex-wrap:wrap;padding:14px 20px 0}
+main{padding:16px 20px 80px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px;position:relative;transition:.2s}
+.card:hover{border-color:#3d4a66;transform:translateY(-2px)}
+.card.lead{border-color:var(--good);box-shadow:0 0 0 1px var(--good) inset}
+.card.outbid{border-color:var(--bad)}
+.card.soon .left{color:var(--acc);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.5}}
+.top{display:flex;align-items:center;gap:8px}
+.emoji{font-size:34px}
+.rar{font-size:11px;font-weight:700;color:var(--c);border:1px solid var(--c);padding:2px 8px;border-radius:20px}
+.tag{font-size:11px;background:#4da3ff22;color:var(--blue);padding:2px 8px;border-radius:20px}
+.card h3{margin:0;font-size:16px}
+.sub{font-size:12px;color:var(--mut)}
+.row{display:flex;justify-content:space-between;align-items:flex-end}
+.row label{font-size:11px;color:var(--mut);display:block}
+.row b{font-size:19px}
+.r{text-align:right}
+.leader{font-size:12px;color:var(--mut)}
+.btns{display:flex;gap:8px;margin-top:auto}
+.btns button{flex:1}
+.quick{background:var(--acc);color:#fff;font-weight:700}
+.green{background:var(--good);color:#06210f;font-weight:700}
+.gold{background:var(--gold);color:#2b1c00;font-weight:700}
+.blue{background:var(--blue);color:#001a33;font-weight:700}
+.red{background:var(--bad);color:#fff;font-weight:700}
+.empty{color:var(--mut);text-align:center;padding:50px 10px}
+h2{margin:6px 0 12px;font-size:18px}
+.list{display:flex;flex-direction:column;gap:6px}
+.li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}
+.li small{color:var(--mut)}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.stat label{font-size:12px;color:var(--mut)}
+.stat b{display:block;font-size:22px;margin-top:4px}
+.log .good{color:var(--good)}.log .bad{color:var(--bad)}.log .info{color:var(--blue)}
+footer{position:fixed;bottom:0;left:0;right:0;padding:8px 20px;background:var(--panel);border-top:1px solid var(--line);font-size:12px;color:var(--mut);display:flex;justify-content:space-between;align-items:center}
+footer button{padding:4px 10px;font-size:14px;background:transparent}
+#modal{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+#modal.hidden{display:none}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;width:100%;max-width:480px;max-height:90vh;overflow:auto;position:relative}
+.box h2{margin-top:0}
+.x{position:absolute;top:12px;right:12px;padding:4px 10px;background:transparent;font-size:18px}
+.hist{max-height:200px;overflow:auto;font-size:13px;margin-top:8px}
+.hist div{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--line)}
+.hist .you{color:var(--good);font-weight:700}
+.bidbox{display:flex;gap:8px;margin:12px 0 8px;flex-wrap:wrap}
+.bidbox input{flex:1;min-width:120px}
+.hint{font-size:12px;color:var(--mut);line-height:1.5}
+.big{font-size:26px;font-weight:800}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+#toasts{position:fixed;right:16px;bottom:50px;display:flex;flex-direction:column;gap:8px;z-index:30;max-width:340px}
+.toast{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:10px;padding:10px 12px;font-size:13px;animation:in .25s;box-shadow:0 6px 20px #0008}
+.toast.good{border-left-color:var(--good)}.toast.bad{border-left-color:var(--bad)}
+@keyframes in{from{transform:translateX(30px);opacity:0}}
+@media(max-width:600px){.wallet b{font-size:16px}.logo{font-size:20px}main{padding:12px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><div class="live-dot"></div>🔨 Auktion<span>Live</span> <small class="ver">v0.0.1 Open Beta</small></div>
+  <div class="wallet">
+    <div><label>Kontostand</label><b id="money">–</b></div>
+    <div><label>Verfügbar</label><b id="avail">–</b></div>
+    <button id="helpBtn" title="Hilfe">❓</button>
+  </div>
+</header>
+<nav id="tabs">
+  <button data-tab="live" class="on">🔴 Live</button>
+  <button data-tab="mine">🙋 Meine Gebote<span class="cnt" id="cMine" hidden></span></button>
+  <button data-tab="inv">🎒 Inventar<span class="cnt" id="cInv" hidden></span></button>
+  <button data-tab="sell">🏷️ Verkäufe<span class="cnt" id="cSell" hidden></span></button>
+  <button data-tab="stats">📊 Statistik</button>
+</nav>
+<div id="filters"></div>
+<main id="view"></main>
+<footer><span>AuktionLive v0.0.1 Open Beta · nur Spielgeld 💸 · läuft auch offline weiter</span><button id="cheatBtn" title="Cheat-Menü">🛠️</button></footer>
+<div id="modal" class="hidden"><div class="box" id="mbox"></div></div>
+<div id="toasts"></div>
+
+<script>
+"use strict";
+// ================== KONFIG ==================
+const VERSION = "0.0.1 Open Beta";
+const SAVE = "auktionlive_save_v001";
+const CHEAT_CODE = "4uT2-U6G3";
+const MAX_OFFLINE = 3 * 864e5;      // max. 3 Tage werden nachsimuliert
+const LIVE_TARGET = 12;             // so viele Auktionen laufen gleichzeitig
+const START_MONEY = 10000;
+const FEE = 0.05;                   // Verkaufsgebühr bei eigenen Auktionen
+const DEALER = 0.65;                // Händler zahlt 65 % vom Schätzwert
+
+const R = (a, b) => a + Math.random() * (b - a);
+const RI = (a, b) => Math.floor(R(a, b + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const uid = () => Math.random().toString(36).slice(2, 10);
+const EUR = new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+const M = n => EUR.format(Math.round(n));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+const CATS = [
+  { cat: "Uhren", e: "⌚", min: 300, max: 9000, items: ["Taucher-Chronograph", "Goldene Taschenuhr", "Fliegeruhr Mk II", "Skelett-Automatik", "Mondphasen-Uhr"] },
+  { cat: "Autos", e: "🚗", min: 4000, max: 90000, items: ["Oldtimer Cabrio 1965", "Sportwagen GT", "Youngtimer Kombi", "Rallye-Coupé", "Luxus-Limousine", "US-Muscle-Car"] },
+  { cat: "Kunst", e: "🖼️", min: 200, max: 35000, items: ["Ölgemälde „Sonnenuntergang“", "Abstrakte Leinwand", "Bronze-Skulptur", "Pop-Art-Druck", "Antike Landkarte"] },
+  { cat: "Sneaker", e: "👟", min: 80, max: 2500, items: ["Retro High OG", "Limited Runner", "Collab Low „Sand“", "Basketball Mid 1985"] },
+  { cat: "Technik", e: "💻", min: 100, max: 4000, items: ["Gaming-PC RTX", "Retro-Konsole OVP", "Profi-Kamera", "High-End-Plattenspieler", "Drohne Pro"] },
+  { cat: "Sammelkarten", e: "🃏", min: 20, max: 12000, items: ["Holo-Drache 1. Edition", "Signierte Fußballkarte", "Rookie-Karte Grade 10", "Glitzer-Monster-Karte"] },
+  { cat: "Schmuck", e: "💎", min: 250, max: 18000, items: ["Diamantring 1 Karat", "Perlenkette", "Goldkette 18K", "Saphir-Ohrringe"] },
+  { cat: "Münzen", e: "🪙", min: 30, max: 6000, items: ["Goldmünze 1 Unze", "Römischer Denar", "Silbermünze 1890", "Fehlprägung 2 Euro"] },
+  { cat: "Antiquitäten", e: "🏺", min: 100, max: 15000, items: ["Ming-Vase (angeblich)", "Barock-Kommode", "Grammophon 1920", "Ritterhelm"] },
+];
+const RAR = [
+  { n: "Gewöhnlich", c: "#9aa4b2", m: 1, w: 60 },
+  { n: "Selten", c: "#4da3ff", m: 1.8, w: 27 },
+  { n: "Episch", c: "#b26bff", m: 3.2, w: 10 },
+  { n: "Legendär", c: "#ffb020", m: 6, w: 3 },
+];
+const CONDS = { "OVP": 1.25, "Neuwertig": 1.1, "Sehr gut": 1, "Gut": .9, "Gebraucht": .75 };
+const BOTS = ["Klaus_88", "SammlerSabine", "BidKing", "Mia.kauft", "Torsten_Deals", "xXSchnäppchenXx", "Oma_Gerda", "Luca99", "RetroRalf", "Uhrenfuchs", "Kunstkenner_K", "Jens.B", "SneakerSven", "Hannah_H", "Lord_Gebot", "DieterDeal", "NinaNice", "PaulPreis", "Elke_Antik", "MaxMünze", "Svenja_S", "Bieterbär", "Händler_Hakan", "Finn_F", "Anja2000", "Carl_Collector", "Lena.Luxus", "Ben_bietet", "Garagenfund_Gustav", "TurboTim"];
+
+// ================== HILFSFUNKTIONEN ==================
+function roundNice(x) {
+  if (x < 100) return Math.max(1, Math.round(x / 5) * 5);
+  if (x < 1000) return Math.round(x / 10) * 10;
+  if (x < 10000) return Math.round(x / 50) * 50;
+  return Math.round(x / 500) * 500;
+}
+function inc(b) {
+  if (b < 50) return 2; if (b < 200) return 5; if (b < 1000) return 10;
+  if (b < 5000) return 50; if (b < 20000) return 100; if (b < 100000) return 500; return 1000;
+}
+function makeItem(r) {
+  const c = pick(CATS);
+  if (r == null) { let x = Math.random() * 100; r = 0; for (let i = 0; i < RAR.length; i++) { if (x < RAR[i].w) { r = i; break; } x -= RAR[i].w; } }
+  const cond = pick(Object.keys(CONDS));
+  const base = Math.exp(R(Math.log(c.min), Math.log(c.max)));
+  return { id: uid(), name: pick(c.items), cat: c.cat, e: c.e, rar: r, cond, value: roundNice(base * RAR[r].m * CONDS[cond]) };
+}
+function newAuction(t, item, seller = "house", sp, dur) {
+  if (!dur) dur = item.value > 20000 && Math.random() < .5 ? RI(30, 90) * 60e3 : RI(3, 30) * 60e3;
+  sp = sp || roundNice(item.value * R(.03, .25));
+  const names = [...BOTS].sort(() => Math.random() - .5).slice(0, RI(2, 7));
+  const bots = names.map(name => {
+    let mx = item.value * R(.4, 1.12);
+    if (Math.random() < .08) mx = item.value * R(1.12, 1.6); // Liebhaber zahlt mehr
+    return { name, max: Math.round(mx), nextAt: t + R(4e3, dur * .7) };
+  });
+  if (Math.random() < .4) bots[0].nextAt = t + dur - R(3e3, 12e3); // Sniper
+  return { id: uid(), item, seller, start: t, end: t + dur, sp, bid: 0, leader: null, hist: [], proxy: 0, bots, done: false, youBid: false };
+}
+const minNext = a => a.leader ? a.bid + inc(a.bid) : a.sp;
+function reserved(except) {
+  return S.live.reduce((s, a) => s + (!a.done && a !== except && a.leader === "you" ? a.bid : 0), 0);
+}
+const avail = except => S.money - reserved(except);
+const gnow = () => Date.now() + (S.offset || 0);
+
+// ================== SPIELSTAND ==================
+let S, catching = false, report = [], tab = "live", filt = { cat: "Alle", sort: "end" }, modalFor = null, lastVer = -1;
+
+function fresh() {
+  const now = Date.now();
+  const st = { v: VERSION, money: START_MONEY, live: [], inv: [], ended: [], log: [], stats: { won: 0, sold: 0, spent: 0, earned: 0, profit: 0, bids: 0, dealer: 0 }, last: now, nextSpawn: now + R(20e3, 60e3), offset: 0, cheat: false, ver: 0 };
+  S = st;
+  for (let i = 0; i < LIVE_TARGET; i++) {
+    const it = makeItem(); const dur = RI(4, 30) * 60e3; const back = R(0, dur * .7);
+    const a = newAuction(now - back, it, "house", null, dur);
+    simulate(a, now); if (!a.done) st.live.push(a);
+  }
+  st.ver++;
+  return st;
+}
+function save() { try { localStorage.setItem(SAVE, JSON.stringify(S)); } catch (e) { } }
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SAVE));
+    if (!s || !s.live) return null;
+    s.live.forEach(a => a.bots.forEach(b => { if (b.nextAt === null) b.nextAt = Infinity; })); // JSON macht Infinity zu null
+    return s;
+  } catch (e) { return null; }
+}
+
+// ================== SIMULATION ==================
+function placeBid(a, who, amt, t) {
+  a.bid = amt; a.leader = who;
+  a.hist.unshift({ who, amt, t }); if (a.hist.length > 50) a.hist.pop();
+  if (a.end - t < 20e3) a.end = t + 20e3; // Verlängerung bei Last-Second-Geboten
+  if (who === "you") { a.youBid = true; S.stats.bids++; }
+  const need = minNext(a);
+  for (const b of a.bots) if (b.name !== who && b.max >= need) b.nextAt = Math.min(b.nextAt, t + R(3e3, 45e3));
+  S.ver++;
+}
+function simulate(a, until) {
+  if (a.done) return;
+  for (let guard = 0; guard < 20000; guard++) {
+    const lim = Math.min(until, a.end);
+    let b = null;
+    for (const x of a.bots) if (x.nextAt <= lim && (!b || x.nextAt < b.nextAt)) b = x;
+    if (!b) break;
+    const t = b.nextAt, need = minNext(a);
+    if (a.leader !== b.name && b.max >= need) {
+      let amt = need;
+      if (Math.random() < .2) amt = Math.min(b.max, need + inc(need) * RI(1, 5));
+      const prev = a.leader;
+      placeBid(a, b.name, amt, t);
+      if (prev === "you") {
+        const n2 = minNext(a);
+        if (a.proxy >= n2 && avail(a) >= n2) placeBid(a, "you", n2, t + 300);
+        else notify(`😬 Überboten: ${a.item.e} ${a.item.name} – ${b.name} bietet ${M(amt)}`, "bad", t);
+      }
+    }
+    const rem = a.end - t;
+    b.nextAt = b.max < minNext(a) ? Infinity : t + (rem < 90e3 ? R(2e3, 12e3) : R(20e3, 180e3));
+  }
+  if (a.end <= until) finish(a);
+}
+function finish(a) {
+  a.done = true; S.ver++;
+  const it = a.item, t = a.end;
+  if (a.seller === "you") {
+    if (a.leader) {
+      const net = Math.floor(a.bid * (1 - FEE));
+      S.money += net; S.stats.sold++; S.stats.earned += net; S.stats.profit += net - (it.paid || 0);
+      notify(`💰 Verkauft: ${it.e} ${it.name} an ${a.leader} für ${M(a.bid)} (+${M(net)} nach Gebühr)`, "good", t);
+    } else { S.inv.push(it); notify(`📦 Keine Gebote: ${it.e} ${it.name} ist zurück im Inventar`, "info", t); }
+  } else if (a.leader === "you") {
+    S.money -= a.bid; it.paid = a.bid; S.inv.push(it); S.stats.won++; S.stats.spent += a.bid;
+    notify(`🏆 Gewonnen: ${it.e} ${it.name} für ${M(a.bid)} (Schätzwert ${M(it.value)})`, "good", t);
+  } else if (a.youBid) {
+    notify(`❌ Verloren: ${it.e} ${it.name} ging an ${a.leader} für ${M(a.bid)}`, "bad", t);
+  }
+  S.ended.unshift({ id: a.id, item: it, seller: a.seller, bid: a.bid, leader: a.leader, end: t, youBid: a.youBid, bids: a.hist.length });
+  if (S.ended.length > 60) S.ended.length = 60;
+}
+function clean() { S.live = S.live.filter(a => !a.done); }
+function advance(now) {
+  if (now - S.last > MAX_OFFLINE) S.last = now - MAX_OFFLINE;
+  if (S.nextSpawn < S.last) S.nextSpawn = S.last;
+  while (S.nextSpawn <= now) {
+    const ts = S.nextSpawn;
+    S.live.forEach(a => simulate(a, ts)); clean();
+    if (S.live.filter(a => a.seller === "house").length < LIVE_TARGET) { S.live.push(newAuction(ts, makeItem(), "house")); S.ver++; }
+    S.nextSpawn = ts + R(25e3, 90e3);
+  }
+  S.live.forEach(a => simulate(a, now)); clean();
+  S.last = now;
+}
+function notify(msg, type = "info", t) {
+  S.log.unshift({ t: t || gnow(), msg, type }); if (S.log.length > 150) S.log.length = 150;
+  if (catching) report.push({ msg, type }); else toast(msg, type);
+}
+function toast(msg, type = "info") {
+  const d = document.createElement("div"); d.className = "toast " + type; d.textContent = msg;
+  document.getElementById("toasts").appendChild(d);
+  setTimeout(() => d.remove(), 5000);
+}
+
+// Nachholen, wenn der Tab zu war / im Hintergrund lief
+function catchUp(showReport) {
+  const now = gnow(), gap = now - S.last, before = S.money;
+  catching = true; report = [];
+  advance(now);
+  catching = false;
+  if (showReport && gap > 30e3 && report.length) showReportModal(gap, before);
+  save();
+}
+
+// ================== RENDERING ==================
+function fmtLeft(ms) {
+  if (ms <= 0) return "beendet";
+  const s = Math.floor(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), ss = s % 60;
+  return h ? `${h}:${String(m).padStart(2, "0")}:${String(ss).padStart(2, "0")}` : `${m}:${String(ss).padStart(2, "0")}`;
+}
+function fmtAgo(t) {
+  const d = (gnow() - t) / 1000;
+  if (d < 60) return "gerade eben"; if (d < 3600) return `vor ${Math.floor(d / 60)} Min`;
+  if (d < 86400) return `vor ${Math.floor(d / 3600)} Std`; return `vor ${Math.floor(d / 86400)} Tg`;
+}
+function fmtDur(ms) {
+  const m = Math.floor(ms / 60e3), h = Math.floor(m / 60), d = Math.floor(h / 24);
+  if (d) return `${d} Tg ${h % 24} Std`; if (h) return `${h} Std ${m % 60} Min`; return `${m} Min`;
+}
+const rarTag = it => `<span class="rar" style="--c:${RAR[it.rar].c}">${RAR[it.rar].n}</span>`;
+
+function card(a) {
+  const it = a.item, you = a.leader === "you", mineSale = a.seller === "you";
+  const cls = you ? "lead" : (a.youBid && !mineSale ? "outbid" : "");
+  const lead = a.leader ? (you ? `🟢 Du führst${a.proxy ? ` · Auto bis ${M(a.proxy)}` : ""}` : (a.youBid && !mineSale ? "🔴 Überboten von " : "👤 ") + esc(a.leader)) : "Noch keine Gebote";
+  return `<div class="card ${cls}" data-card="${a.id}">
+    <div class="top"><span class="emoji">${it.e}</span>${rarTag(it)}${mineSale ? '<span class="tag">Dein Verkauf</span>' : ""}</div>
+    <h3>${esc(it.name)}</h3>
+    <div class="sub">${it.cat} · ${it.cond} · Schätzwert ${M(it.value)}</div>
+    <div class="row"><div><label>${a.leader ? "Aktuelles Gebot" : "Startpreis"}</label><b>${M(a.leader ? a.bid : a.sp)}</b></div>
+    <div class="r"><label>Endet in</label><b class="left" data-end="${a.id}">${fmtLeft(a.end - gnow())}</b></div></div>
+    <div class="leader">${lead} · ${a.hist.length} Gebote</div>
+    <div class="btns">${mineSale ? `<button data-act="open" data-id="${a.id}">👀 Verlauf ansehen</button>` :
+      `<button class="quick" data-act="quick" data-id="${a.id}" ${you ? "disabled" : ""}>Bieten ${M(minNext(a))}</button><button data-act="open" data-id="${a.id}">Details</button>`}</div>
+  </div>`;
+}
+function sortList(list) {
+  const f = { end: (a, b) => a.end - b.end, up: (a, b) => (a.bid || a.sp) - (b.bid || b.sp), down: (a, b) => (b.bid || b.sp) - (a.bid || a.sp), val: (a, b) => b.item.value - a.item.value, rar: (a, b) => b.item.rar - a.item.rar || a.end - b.end, deal: (a, b) => ((a.bid || a.sp) / a.item.value) - ((b.bid || b.sp) / b.item.value) }[filt.sort];
+  return list.sort(f);
+}
+function renderFilters() {
+  const el = document.getElementById("filters");
+  if (tab !== "live") { el.innerHTML = ""; return; }
+  el.innerHTML = `<select id="fCat">${["Alle", ...CATS.map(c => c.cat)].map(c => `<option ${c === filt.cat ? "selected" : ""}>${c}</option>`).join("")}</select>
+  <select id="fSort">${[["end", "⏱️ Endet bald"], ["deal", "🤑 Bester Deal"], ["up", "💶 Preis aufsteigend"], ["down", "💶 Preis absteigend"], ["val", "💎 Schätzwert"], ["rar", "⭐ Seltenheit"]].map(([k, n]) => `<option value="${k}" ${k === filt.sort ? "selected" : ""}>${n}</option>`).join("")}</select>`;
+  document.getElementById("fCat").onchange = e => { filt.cat = e.target.value; render(true); };
+  document.getElementById("fSort").onchange = e => { filt.sort = e.target.value; render(true); };
+}
+function endedLi(e) {
+  const it = e.item;
+  let res;
+  if (e.seller === "you") res = e.leader ? `<span style="color:var(--good)">Verkauft für ${M(e.bid)}</span>` : `<span style="color:var(--mut)">Keine Gebote</span>`;
+  else res = e.leader === "you" ? `<span style="color:var(--good)">🏆 Gewonnen für ${M(e.bid)}</span>` : `<span style="color:var(--bad)">Verloren (${M(e.bid)})</span>`;
+  return `<div class="li"><span>${it.e} <b>${esc(it.name)}</b> ${rarTag(it)}<br><small>${fmtAgo(e.end)} · Schätzwert ${M(it.value)}</small></span>${res}</div>`;
+}
+function render(force) {
+  document.getElementById("money").textContent = M(S.money);
+  document.getElementById("avail").textContent = M(avail());
+  const mine = S.live.filter(a => a.seller === "house" && (a.youBid || a.proxy));
+  const sells = S.live.filter(a => a.seller === "you");
+  setCnt("cMine", mine.length); setCnt("cInv", S.inv.length); setCnt("cSell", sells.length);
+  if (!force && S.ver === lastVer) return;
+  lastVer = S.ver;
+  const v = document.getElementById("view");
+  if (tab === "live") {
+    let list = S.live.filter(a => a.seller === "house" && (filt.cat === "Alle" || a.item.cat === filt.cat));
+    v.innerHTML = list.length ? `<div class="grid">${sortList(list).map(card).join("")}</div>` : `<div class="empty">Gerade keine Auktionen in dieser Kategorie – gleich kommen neue rein ⏳</div>`;
+  } else if (tab === "mine") {
+    const ended = S.ended.filter(e => e.seller === "house" && e.youBid).slice(0, 20);
+    v.innerHTML = `<h2>🔴 Laufende Gebote</h2>${mine.length ? `<div class="grid">${sortList(mine).map(card).join("")}</div>` : `<div class="empty">Du bietest gerade nirgends mit. Ab in den Live-Tab! 🔨</div>`}
+    <h2 style="margin-top:24px">✅ Beendet</h2>${ended.length ? `<div class="list">${ended.map(endedLi).join("")}</div>` : `<div class="empty">Noch nichts beendet.</div>`}`;
+  } else if (tab === "inv") {
+    const total = S.inv.reduce((s, i) => s + i.value, 0);
+    v.innerHTML = `<h2>🎒 Inventar · ${S.inv.length} Items · Schätzwert gesamt ${M(total)}</h2>` + (S.inv.length ? `<div class="grid">${S.inv.map(it => `<div class="card">
+      <div class="top"><span class="emoji">${it.e}</span>${rarTag(it)}</div><h3>${esc(it.name)}</h3>
+      <div class="sub">${it.cat} · ${it.cond}</div>
+      <div class="row"><div><label>Schätzwert</label><b>${M(it.value)}</b></div><div class="r"><label>Bezahlt</label><b>${it.paid != null ? M(it.paid) : "–"}</b></div></div>
+      ${it.paid != null ? `<div class="leader" style="color:${it.value >= it.paid ? "var(--good)" : "var(--bad)"}">${it.value >= it.paid ? "📈" : "📉"} ${M(it.value - it.paid)} gegenüber Kaufpreis</div>` : ""}
+      <div class="btns"><button class="green" data-act="sellAuc" data-id="${it.id}">🔨 Versteigern</button><button data-act="dealer" data-id="${it.id}">🤝 Händler ${M(it.value * DEALER)}</button></div>
+    </div>`).join("")}</div>` : `<div class="empty">Dein Inventar ist leer. Gewinne Auktionen, um Items zu bekommen 🏆</div>`);
+  } else if (tab === "sell") {
+    const ended = S.ended.filter(e => e.seller === "you").slice(0, 20);
+    v.innerHTML = `<h2>🏷️ Deine laufenden Verkäufe</h2>${sells.length ? `<div class="grid">${sortList(sells).map(card).join("")}</div>` : `<div class="empty">Du verkaufst gerade nichts. Geh ins Inventar und klick auf „Versteigern“.</div>`}
+    <h2 style="margin-top:24px">✅ Beendete Verkäufe</h2>${ended.length ? `<div class="list">${ended.map(endedLi).join("")}</div>` : `<div class="empty">Noch keine Verkäufe.</div>`}
+    <p class="hint">Gebühr pro Verkauf: ${FEE * 100} % · Bots bieten auch auf deine Auktionen – auch wenn du offline bist.</p>`;
+  } else if (tab === "stats") {
+    const invVal = S.inv.reduce((s, i) => s + i.value, 0);
+    const net = S.money + invVal + S.live.filter(a => a.seller === "you").reduce((s, a) => s + a.item.value, 0);
+    const st = S.stats;
+    v.innerHTML = `<div class="stats">
+      ${[["💶 Kontostand", M(S.money)], ["🏦 Vermögen (inkl. Items)", M(net)], ["📈 Gewinn/Verlust", `<span style="color:${net >= START_MONEY ? "var(--good)" : "var(--bad)"}">${M(net - START_MONEY)}</span>`], ["🏆 Gewonnen", st.won], ["💰 Verkauft", st.sold + st.dealer], ["🔨 Gebote abgegeben", st.bids], ["💸 Ausgegeben", M(st.spent)], ["🤑 Eingenommen", M(st.earned)], ["📊 Handelsgewinn", M(st.profit)]].map(([l, b]) => `<div class="stat"><label>${l}</label><b>${b}</b></div>`).join("")}
+    </div>
+    <h2>📜 Verlauf</h2><div class="list log">${S.log.slice(0, 60).map(l => `<div class="li"><span class="${l.type}">${esc(l.msg)}</span><small>${fmtAgo(l.t)}</small></div>`).join("") || '<div class="empty">Noch nichts passiert.</div>'}</div>
+    <p style="margin-top:24px"><button class="red" data-act="reset">🗑️ Spielstand zurücksetzen</button></p>`;
+  }
+}
+function setCnt(id, n) { const e = document.getElementById(id); e.hidden = !n; e.textContent = n; }
+function tickTimers() {
+  const now = gnow();
+  document.querySelectorAll("[data-end]").forEach(el => {
+    const a = S.live.find(x => x.id === el.dataset.end); if (!a) return;
+    const left = a.end - now; el.textContent = fmtLeft(left);
+    el.closest(".card")?.classList.toggle("soon", left < 60e3);
+  });
+}
+
+// ================== MODALS ==================
+const modal = document.getElementById("modal"), mbox = document.getElementById("mbox");
+function openModal(html, forId = null) { mbox.innerHTML = `<button class="x" data-act="close">✕</button>` + html; modal.classList.remove("hidden"); modalFor = forId; }
+function closeModal() { modal.classList.add("hidden"); modalFor = null; }
+modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
+
+function openAuction(id) {
+  const a = S.live.find(x => x.id === id); if (!a) return;
+  const it = a.item, mineSale = a.seller === "you";
+  openModal(`<div class="top"><span class="emoji" style="font-size:46px">${it.e}</span>${rarTag(it)}${mineSale ? '<span class="tag">Dein Verkauf</span>' : ""}</div>
+  <h2>${esc(it.name)}</h2>
+  <div class="sub">${it.cat} · Zustand: ${it.cond} · Schätzwert <b>${M(it.value)}</b></div>
+  <div class="row" style="margin-top:14px"><div><label id="mdLbl">Aktuelles Gebot</label><span class="big" id="mdBid"></span></div><div class="r"><label>Endet in</label><span class="big" id="mdLeft"></span></div></div>
+  <div class="leader" id="mdLead" style="margin-top:6px"></div>
+  ${mineSale ? "" : `<div class="bidbox"><input id="mdAmt" type="number" min="1" step="1" placeholder="Betrag in €"><button class="quick" data-act="mbid">💸 Bieten</button><button class="blue" data-act="mproxy">🤖 Auto-Max</button></div>
+  <div class="hint" id="mdHint"></div>
+  <div class="hint">🤖 <b>Auto-Max:</b> Du legst dein Maximum fest – das Spiel bietet automatisch für dich mit, sobald dich ein Bot überbietet. Funktioniert auch, wenn der Tab zu ist!</div>`}
+  <h2 style="margin-top:16px;font-size:15px">📜 Gebotsverlauf</h2><div class="hist" id="mdHist"></div>`, id);
+  updateAuctionModal(true);
+}
+function updateAuctionModal(first) {
+  if (!modalFor) return;
+  const a = S.live.find(x => x.id === modalFor);
+  const bidEl = document.getElementById("mdBid"); if (!bidEl) return;
+  if (!a) {
+    const e = S.ended.find(x => x.id === modalFor);
+    document.getElementById("mdLeft").textContent = "beendet";
+    if (e) document.getElementById("mdLead").innerHTML = e.leader === "you" ? "🏆 <b>Du hast gewonnen!</b>" : e.leader ? `Ging an ${esc(e.leader)} für ${M(e.bid)}` : "Keine Gebote";
+    document.querySelectorAll("#mbox .bidbox button").forEach(b => b.disabled = true);
+    modalFor = null; return;
+  }
+  document.getElementById("mdLbl").textContent = a.leader ? "Aktuelles Gebot" : "Startpreis";
+  bidEl.textContent = M(a.leader ? a.bid : a.sp);
+  document.getElementById("mdLeft").textContent = fmtLeft(a.end - gnow());
+  document.getElementById("mdLead").innerHTML = a.leader ? (a.leader === "you" ? `🟢 <b>Du führst!</b>${a.proxy ? ` Auto-Max: ${M(a.proxy)} <button data-act="unproxy" style="padding:2px 8px;font-size:12px">entfernen</button>` : ""}` : `👤 Höchstbietender: <b>${esc(a.leader)}</b>`) : "Noch keine Gebote – sei der Erste!";
+  document.getElementById("mdHist").innerHTML = a.hist.map(h => `<div class="${h.who === "you" ? "you" : ""}"><span>${h.who === "you" ? "Du" : esc(h.who)}</span><span>${M(h.amt)}</span><small>${fmtAgo(h.t)}</small></div>`).join("") || '<div style="color:var(--mut)">Noch keine Gebote</div>';
+  const hint = document.getElementById("mdHint");
+  if (hint) hint.innerHTML = `Mindestgebot: <b>${M(minNext(a))}</b> · Verfügbar: <b>${M(avail(a))}</b>`;
+  const inp = document.getElementById("mdAmt");
+  if (inp && first) inp.value = minNext(a);
+}
+function doBid(a, amt, proxy) {
+  const now = gnow();
+  if (!a || a.done || a.end <= now) return toast("⏱️ Auktion ist schon vorbei", "bad");
+  if (a.seller === "you") return toast("Du kannst nicht auf deine eigene Auktion bieten 😉", "bad");
+  amt = Math.floor(amt);
+  if (!amt || amt < 1) return toast("Bitte einen gültigen Betrag eingeben", "bad");
+  const you = a.leader === "you";
+  if (proxy) {
+    const need = you ? a.bid + 1 : minNext(a);
+    if (amt < need) return toast(`Auto-Max muss mindestens ${M(need)} sein`, "bad");
+    if (!you && avail(a) < minNext(a)) return toast("💸 Nicht genug verfügbares Geld", "bad");
+    a.proxy = amt;
+    if (!you) placeBid(a, "you", minNext(a), now);
+    toast(`🤖 Auto-Max auf ${M(amt)} gesetzt`, "good"); S.ver++;
+  } else {
+    const need = minNext(a);
+    if (you) return toast("Du führst bereits 🟢 – nutze Auto-Max, um dein Limit zu erhöhen", "info");
+    if (amt < need) return toast(`Mindestgebot ist ${M(need)}`, "bad");
+    if (avail(a) < amt) return toast("💸 Nicht genug verfügbares Geld", "bad");
+    placeBid(a, "you", amt, now);
+    toast(`✅ Gebot über ${M(amt)} abgegeben`, "good");
+  }
+  save(); render(); updateAuctionModal();
+}
+function openSell(id) {
+  const it = S.inv.find(x => x.id === id); if (!it) return;
+  openModal(`<h2>🔨 ${it.e} ${esc(it.name)} versteigern</h2>
+  <div class="sub">Schätzwert ${M(it.value)}${it.paid != null ? ` · Bezahlt ${M(it.paid)}` : ""}</div>
+  <p class="hint">Je niedriger der Startpreis, desto mehr Bieter steigen ein. Ist er zu hoch, bietet vielleicht niemand. Gebühr: ${FEE * 100} % vom Endpreis.</p>
+  <label class="hint">Startpreis (€)</label><input id="sSp" type="number" min="1" value="${roundNice(it.value * .3)}" style="width:100%;margin:4px 0 10px">
+  <label class="hint">Laufzeit</label><select id="sDur" style="width:100%;margin:4px 0 14px">
+    ${[[5, "5 Minuten"], [15, "15 Minuten"], [30, "30 Minuten"], [60, "1 Stunde"], [180, "3 Stunden"], [720, "12 Stunden"]].map(([m, n]) => `<option value="${m}" ${m === 15 ? "selected" : ""}>${n}</option>`).join("")}</select>
+  <button class="green" data-act="startSell" data-id="${it.id}" style="width:100%">🚀 Auktion starten</button>`);
+}
+function showReportModal(gap, before) {
+  const diff = S.money - before;
+  openModal(`<h2>👋 Willkommen zurück!</h2>
+  <p class="hint">Du warst <b>${fmtDur(gap)}</b> weg${gap >= MAX_OFFLINE ? " (max. 3 Tage werden nachgeholt)" : ""}. Das ist in der Zwischenzeit passiert:</p>
+  <div class="list log" style="margin:10px 0">${report.slice(0, 40).map(r => `<div class="li"><span class="${r.type}">${esc(r.msg)}</span></div>`).join("")}${report.length > 40 ? `<div class="hint">… und ${report.length - 40} weitere (siehe Statistik)</div>` : ""}</div>
+  <p>Kontostand: <b>${M(before)}</b> → <b style="color:${diff >= 0 ? "var(--good)" : "var(--bad)"}">${M(S.money)}</b></p>
+  <button class="quick" data-act="close" style="width:100%">Weiter bieten 🔨</button>`);
+}
+function openHelp() {
+  openModal(`<h2>❓ So funktioniert AuktionLive</h2>
+  <div class="hint" style="font-size:14px">
+  🔴 <b>Live-Auktionen:</b> Ständig starten neue Auktionen mit Uhren, Autos, Kunst, Sneakern & mehr. Bots bieten in Echtzeit mit.<br><br>
+  💸 <b>Bieten:</b> Schnellgebot = Mindestgebot. Bei Geboten in den letzten 20 Sek. verlängert sich die Auktion (wie in echt).<br><br>
+  🤖 <b>Auto-Max:</b> Leg dein Maximum fest – das Spiel bietet automatisch für dich, auch wenn der Tab zu ist.<br><br>
+  🌙 <b>Offline:</b> Die Welt läuft weiter, wenn du weg bist. Beim nächsten Öffnen wird alles nachgeholt (bis zu 3 Tage) und du bekommst einen Bericht.<br><br>
+  🎒 <b>Inventar:</b> Gewonnene Items kannst du selbst versteigern (${FEE * 100} % Gebühr) oder sofort an den Händler verkaufen (${DEALER * 100} % vom Schätzwert).<br><br>
+  💡 <b>Ziel:</b> Günstig kaufen, teuer verkaufen und dein Vermögen vergrößern. Verfügbar = Kontostand minus Geld, das in führenden Geboten steckt.<br><br>
+  ⚠️ Alles nur <b>Spielgeld</b> – kein echtes Geld!<br><br>
+  <small>Version ${VERSION}</small></div>`);
+}
+function openCheat() {
+  if (!S.cheat) {
+    openModal(`<h2>🛠️ Cheat-Menü</h2><p class="hint">Code eingeben:</p>
+    <input id="cCode" placeholder="XXXX-XXXX" style="width:100%;margin-bottom:10px" autocomplete="off">
+    <button class="gold" data-act="unlock" style="width:100%">🔓 Entsperren</button>`);
+    setTimeout(() => { const i = document.getElementById("cCode"); i.focus(); i.onkeydown = e => { if (e.key === "Enter") unlock(); }; }, 50);
+    return;
+  }
+  openModal(`<h2>🛠️ Cheat-Menü</h2>
+  <div class="hint">💶 Geld</div>
+  <div class="cgrid"><button class="green" data-act="c" data-c="m1k">+1.000 €</button><button class="green" data-act="c" data-c="m10k">+10.000 €</button>
+  <button class="green" data-act="c" data-c="m100k">+100.000 €</button><button class="green" data-act="c" data-c="m1m">+1.000.000 €</button></div>
+  <div class="bidbox" style="margin-top:0"><input id="cSet" type="number" placeholder="Kontostand setzen"><button data-act="c" data-c="set">Setzen</button></div>
+  <div class="hint">🎁 Items & Auktionen</div>
+  <div class="cgrid"><button class="gold" data-act="c" data-c="legItem">⭐ Legendäres Item</button><button class="gold" data-act="c" data-c="legAuc">⭐ Legendäre Auktion</button>
+  <button data-act="c" data-c="newAucs">🔄 Neue Auktionen</button><button data-act="c" data-c="endSoon">⏱️ Alle enden in 15 Sek</button></div>
+  <div class="hint">🤖 Bots</div>
+  <div class="cgrid"><button data-act="c" data-c="poor">🪫 Bots pleite (×0,3)</button><button data-act="c" data-c="rich">🤑 Bots reich (×2)</button></div>
+  <div class="hint">⏩ Zeit</div>
+  <div class="cgrid"><button class="blue" data-act="c" data-c="t10">+10 Minuten</button><button class="blue" data-act="c" data-c="t60">+1 Stunde</button></div>
+  <div class="cgrid" style="margin-top:14px"><button data-act="c" data-c="lock">🔒 Sperren</button><button class="red" data-act="reset">🗑️ Reset</button></div>`);
+}
+function unlock() {
+  const v = (document.getElementById("cCode")?.value || "").replace(/[`\s]/g, "");
+  if (v === CHEAT_CODE) { S.cheat = true; save(); toast("🔓 Cheats freigeschaltet!", "good"); openCheat(); }
+  else toast("❌ Falscher Code", "bad");
+}
+function cheat(c) {
+  const now = gnow(), houses = S.live.filter(a => a.seller === "house");
+  const add = n => { S.money += n; toast(`💶 +${M(n)}`, "good"); };
+  switch (c) {
+    case "m1k": add(1e3); break; case "m10k": add(1e4); break; case "m100k": add(1e5); break; case "m1m": add(1e6); break;
+    case "set": { const v = Number(document.getElementById("cSet").value); if (isFinite(v) && document.getElementById("cSet").value !== "") { S.money = Math.floor(v); toast(`Kontostand: ${M(S.money)}`, "good"); } break; }
+    case "legItem": { const it = makeItem(3); it.paid = 0; S.inv.push(it); toast(`🎁 ${it.e} ${it.name} (${M(it.value)}) ins Inventar`, "good"); break; }
+    case "legAuc": { S.live.push(newAuction(now, makeItem(3), "house")); toast("⭐ Legendäre Auktion gestartet!", "good"); break; }
+    case "newAucs": { for (let i = 0; i < 6; i++) S.live.push(newAuction(now, makeItem(), "house")); toast("🔄 6 neue Auktionen", "good"); break; }
+    case "endSoon": S.live.forEach(a => { if (a.end - now > 15e3) a.end = now + 15e3; a.bots.forEach(b => { if (b.nextAt !== Infinity) b.nextAt = Math.min(b.nextAt, now + R(1e3, 12e3)); }); }); toast("⏱️ Alle Auktionen enden gleich!", "info"); break;
+    case "poor": houses.forEach(a => a.bots.forEach(b => b.max = Math.round(b.max * .3))); toast("🪫 Bots haben kaum noch Geld", "info"); break;
+    case "rich": S.live.forEach(a => a.bots.forEach(b => { b.max = Math.round(b.max * 2); if (b.nextAt === Infinity) b.nextAt = now + R(3e3, 30e3); })); toast("🤑 Bots sind jetzt reich", "info"); break;
+    case "t10": case "t60": { S.offset += (c === "t10" ? 10 : 60) * 60e3; closeModal(); catchUp(true); break; }
+    case "lock": S.cheat = false; closeModal(); toast("🔒 Cheats gesperrt"); break;
+  }
+  S.ver++; save(); render();
+}
+
+// ================== EVENTS ==================
+document.getElementById("tabs").addEventListener("click", e => {
+  const b = e.target.closest("button[data-tab]"); if (!b) return;
+  tab = b.dataset.tab;
+  document.querySelectorAll("#tabs button").forEach(x => x.classList.toggle("on", x === b));
+  renderFilters(); render(true);
+});
+document.getElementById("helpBtn").onclick = openHelp;
+document.getElementById("cheatBtn").onclick = openCheat;
+let resetArmed = false;
+document.body.addEventListener("click", e => {
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const act = b.dataset.act, id = b.dataset.id;
+  if (act === "close") closeModal();
+  else if (act === "open") openAuction(id);
+  else if (act === "quick") { const a = S.live.find(x => x.id === id); if (a) doBid(a, minNext(a), false); }
+  else if (act === "mbid" || act === "mproxy") { const a = S.live.find(x => x.id === modalFor); doBid(a, Number(document.getElementById("mdAmt").value), act === "mproxy"); }
+  else if (act === "unproxy") { const a = S.live.find(x => x.id === modalFor); if (a) { a.proxy = 0; S.ver++; save(); updateAuctionModal(); toast("🤖 Auto-Max entfernt"); } }
+  else if (act === "dealer") {
+    const i = S.inv.findIndex(x => x.id === id); if (i < 0) return;
+    const it = S.inv[i], pay = Math.round(it.value * DEALER);
+    S.inv.splice(i, 1); S.money += pay; S.stats.dealer++; S.stats.earned += pay; S.stats.profit += pay - (it.paid || 0);
+    notify(`🤝 Händler kauft ${it.e} ${it.name} für ${M(pay)}`, "good"); S.ver++; save(); render();
+  }
+  else if (act === "sellAuc") openSell(id);
+  else if (act === "startSell") {
+    const i = S.inv.findIndex(x => x.id === id); if (i < 0) return;
+    const sp = Math.floor(Number(document.getElementById("sSp").value)); const dur = Number(document.getElementById("sDur").value) * 60e3;
+    if (!sp || sp < 1) return toast("Ungültiger Startpreis", "bad");
+    const it = S.inv.splice(i, 1)[0];
+    S.live.push(newAuction(gnow(), it, "you", sp, dur));
+    closeModal(); toast(`🚀 ${it.e} ${it.name} wird jetzt versteigert!`, "good"); S.ver++; save(); render();
+  }
+  else if (act === "unlock") unlock();
+  else if (act === "c") cheat(b.dataset.c);
+  else if (act === "reset") {
+    if (!resetArmed) { resetArmed = true; b.textContent = "⚠️ Wirklich? Nochmal klicken"; setTimeout(() => resetArmed = false, 4000); return; }
+    resetArmed = false; localStorage.removeItem(SAVE); S = fresh(); save(); closeModal(); render(true); toast("🗑️ Neues Spiel gestartet", "info");
+  }
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeModal();
+  if (e.key === "Enter" && document.activeElement?.id === "mdAmt") document.querySelector('[data-act="mbid"]')?.click();
+});
+
+// ================== START ==================
+S = load();
+if (!S) { S = fresh(); save(); setTimeout(openHelp, 300); }
+else catchUp(true);
+renderFilters(); render(true);
+
+setInterval(() => {
+  const gap = gnow() - S.last;
+  if (gap > 30e3) catchUp(true);   // Tab war im Hintergrund/eingeschlafen
+  else { advance(gnow()); save(); }
+  render(); tickTimers(); updateAuctionModal();
+}, 1000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) { catchUp(true); render(true); } });
+window.addEventListener("beforeunload", save);
+window.addEventListener("storage", e => { if (e.key === SAVE && e.newValue) { S = load(); render(true); } });
+</script>
+</body>
+</html>
